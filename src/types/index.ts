@@ -21,11 +21,11 @@ export interface IProductList {
 }
 
 export interface IOrderForms {
-	payment: string;
-	address: string;
-	phone: string;
-	email: string;
-	total: number;
+	payment?: string;
+	address?: string;
+	phone?: string;
+	email?: string;
+	total?: number;
 }
 
 export interface IOrder extends IOrderForms {

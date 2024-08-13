@@ -18,7 +18,7 @@ export class WebLarekApi extends Api {
     }
 
 
-    orderLots(order: IOrder): Promise<IOrderResult> {
+    orderProducts(order: IOrder): Promise<IOrderResult> {
         return this.post('/order', order).then(
             (data: IOrderResult) => data
         );

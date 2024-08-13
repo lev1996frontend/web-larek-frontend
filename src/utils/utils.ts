@@ -16,7 +16,7 @@ export function capitalize(value: string): string {
 
 export type SelectorCollection<T> = string | NodeListOf<Element> | T[];
 
-export function ensureAllElements<T extends HTMLElement>(selectorElement: SelectorCollection<T>, context: HTMLElement = document as unknown as HTMLElement): T[] {
+export function ensureElements<T extends HTMLElement>(selectorElement: SelectorCollection<T>, context: HTMLElement = document as unknown as HTMLElement): T[] {
 	if (isSelector(selectorElement)) {
 			return Array.from(context.querySelectorAll(selectorElement)) as T[];
 	}
@@ -33,7 +33,7 @@ export type SelectorElement<T> = T | string;
 
 export function ensureElement<T extends HTMLElement>(selectorElement: SelectorElement<T>, context?: HTMLElement): T {
 	if (isSelector(selectorElement)) {
-			const elements = ensureAllElements<T>(selectorElement, context);
+			const elements = ensureElements<T>(selectorElement, context);
 			if (elements.length > 1) {
 					console.warn(`selector ${selectorElement} return more then one element`);
 			}
