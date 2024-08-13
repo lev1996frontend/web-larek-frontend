@@ -25,7 +25,7 @@ export interface IOrderForms {
 	address?: string;
 	phone?: string;
 	email?: string;
-	total?: number;
+	total?: number | string;
 }
 
 export interface IOrder extends IOrderForms {

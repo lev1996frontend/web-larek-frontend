@@ -87,14 +87,14 @@ export class AppData extends Model<IAppState> {
     return this.basket;
   }
 
-  private updateTotal() {
+  updateTotal() {
     const totalValue = this.getTotal(); // Получаем общую стоимость
     this.order.total = totalValue; // Устанавливаем общую стоимость в заказ
     this.emitChanges('total:changed', { total: this.order.total }); // Передаем объект
 }
 
 
-  private getTotal(): number {
+   getTotal(): number {
     return this.order.items.reduce((sum, id) => {
       const product = this.catalog.find((item) => item.id === id);
       return sum + (product ? product.price || 0 : 0);

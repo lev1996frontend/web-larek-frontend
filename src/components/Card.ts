@@ -1,10 +1,5 @@
 import { Component } from './base/Components';
-import {
-	cloneTemplate,
-	createElement,
-	ensureElement,
-	formatNumber,
-} from '../utils/utils';
+import { ensureElement } from '../utils/utils';
 
 interface ICardActions {
 	onClick: (event: MouseEvent) => void;
@@ -37,13 +32,13 @@ export class Card<T> extends Component<ICard<T>> {
 	constructor(container: HTMLElement, actions?: ICardActions) {
 		super(container);
 
-		this._title = ensureElement<HTMLElement>(`.card__title`, container);
-		this._image = ensureElement<HTMLImageElement>(`.card__image`, container);
+		this._title = ensureElement<HTMLElement>('.card__title', container);
+		this._image = ensureElement<HTMLImageElement>('.card__image', container);
 		this._category = ensureElement<HTMLButtonElement>(
-			`.card__category`,
+			'.card__category',
 			container
 		);
-		this._price = ensureElement<HTMLButtonElement>(`.card__price`, container);
+		this._price = ensureElement<HTMLButtonElement>('.card__price', container);
 
 		if (actions?.onClick) {
 			if (this._button) {
@@ -105,9 +100,7 @@ export class Card<T> extends Component<ICard<T>> {
 }
 
 interface ICardPrewiew {
-	template: string; // шаблон карточки (галерея, модальное окно, корзина)
 	text: string;
-	onClick: (event: MouseEvent) => void; // обработчик клика
 }
 
 export class CardPreview extends Card<ICardPrewiew> {
@@ -116,8 +109,8 @@ export class CardPreview extends Card<ICardPrewiew> {
 
 	constructor(container: HTMLElement, actions?: ICardActions) {
 		super(container, actions);
-		this._button = container.querySelector(`.card__button`);
-		this._text = ensureElement<HTMLElement>(`.card__text`, container);
+		this._button = container.querySelector('.card__button');
+		this._text = ensureElement<HTMLElement>('.card__text', container);
 
 		if (actions?.onClick) {
 			if (this._button) {
@@ -146,9 +139,9 @@ export class CardBasket extends Component<BasketItem> {
 
 	constructor(container: HTMLElement, actions?: ICardActions) {
 		super(container);
-		this._title = ensureElement<HTMLElement>(`.card__title`, container);
-		this._price = ensureElement<HTMLElement>(`.card__price`, container);
-		this._index = ensureElement<HTMLElement>(`.card__index`, container);
+		this._title = ensureElement<HTMLElement>('.card__title', container);
+		this._price = ensureElement<HTMLElement>('.card__price', container);
+		this._index = ensureElement<HTMLElement>('.card__index', container);
 		this._button = ensureElement<HTMLButtonElement>(`.button`, container);
 
 		if (actions?.onClick) {

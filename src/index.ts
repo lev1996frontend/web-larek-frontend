@@ -10,7 +10,7 @@ import { Basket } from './components/common/Basket';
 import { IOrderForms } from './types';
 import { Order } from './components/Order.ts';
 import { Success } from './components/common/Success';
-import { Card } from './components/Card';
+import { Card, CardPreview } from './components/Card';
 import { WebLarekApi } from './components/Web-LarekApi';
 
 const events = new EventEmitter();
@@ -43,7 +43,7 @@ const contacts = new Сontacts(
 	cloneTemplate<HTMLFormElement>(cardContactsTemplate),
 	events
 );
-const basket = new Basket(cloneTemplate(basketTemplate), events);
+const basket = new Basket(cloneTemplate(basketTemplateCard), events);
 const order = new Order(cloneTemplate(orderTemplate), events);
 
 // Дальше идет бизнес-логика
@@ -61,6 +61,22 @@ events.on('items:changed', () => {
 			price: item.price,
 			category: item.category,
 		});
+	});
+});
+
+// Выбрали продукт для просмотра
+events.on('prewiew:changed', (item: Product) => {
+	const card = new CardPreview(cloneTemplate(cardPreviewTemplate), {
+		onClick: () => events.emit('card:add', item),
+	});
+	modal.render({
+		content: card.render({
+			title: item.title,
+			image: item.image + api.contentDeliveryNetwork,
+			price: item.price,
+			text: item.description,
+			category: item.category,
+		}),
 	});
 });
 
@@ -118,10 +134,12 @@ events.on(
 
 // Выбран  способ оплаты
 
-events.on('payment:change', (data: { field: keyof IOrderForms; value: string }) => {
-	appData.setOrderField(data.field, data.value);
-})
-
+events.on(
+	'payment:change',
+	(data: { field: keyof IOrderForms; value: string }) => {
+		appData.setOrderField(data.field, data.value);
+	}
+);
 
 // Открыть форму заказа
 events.on('order:open', () => {
@@ -136,41 +154,42 @@ events.on('order:open', () => {
 });
 
 events.on('order:submit', () => {
-  appData.order.total = appData.getTotal()
-  modal.render({
-    content: contacts.render({
-      email: '',
-      phone: '',
-      valid: false,
-      errors: []
-    })
-  });
-})
+	appData.order.total = appData.getTotal();
+	modal.render({
+		content: contacts.render({
+			email: '',
+			phone: '',
+			valid: false,
+			errors: [],
+		}),
+	});
+});
 
 /* Пользователь открывает окно контактов - рендерим модальное окно с контентом контактов
 - передать  данные серверу 
 */
 
 events.on('contacts: submit', () => {
-	api.orderProducts(appData.order)
-	.then((result) => {
-		const success = new Success(cloneTemplate(successTemplate), {
-			onClick: () => {
-				modal.close();
-				appData.clearBasket();
-				page.counter = appData.basketProducts.length;
-			}
+	api
+		.orderProducts(appData.order)
+		.then((result) => {
+			const success = new Success(cloneTemplate(successTemplate), {
+				onClick: () => {
+					modal.close();
+					appData.clearBasket();
+					page.counter = appData.basketProducts.length;
+				},
+			});
+			modal.render({
+				content: success.render({
+					total: appData.getTotal(),
+				}),
+			});
 		})
-		modal.render({
-      content: success.render({
-        total: appData.getTotal(),
-      })
-    })
-	})
-.catch((err) => {
-	console.error(err);
-})
-})
+		.catch((err) => {
+			console.error(err);
+		});
+});
 
 // Блокируем прокрутку страницы если открыта модалка
 events.on('modal:open', () => {
@@ -182,12 +201,13 @@ events.on('modal:close', () => {
 	page.locked = false;
 });
 
-// Получаем товары с сервера 
+// Получаем товары с сервера
 
-api.getProductItem()
-  .then((items) => {
-    appData.setCatalog(items);
-  })
-  .catch((err) => {
-    console.error(err);
-  });
+api
+	.getProductItem()
+	.then((items) => {
+		appData.setCatalog(items);
+	})
+	.catch((err) => {
+		console.error(err);
+	});

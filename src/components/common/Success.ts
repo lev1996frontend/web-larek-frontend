@@ -1,56 +1,30 @@
-/**
- * Базовый компонент
- */
-export abstract class Component<T> {
-	protected constructor(protected readonly container: HTMLElement) {
-			// Учитывайте что код в конструкторе исполняется ДО всех объявлений в дочернем классе
-	}
+import { ensureElement } from "../../utils/utils";
+import { Component } from "../base/Components";
 
-	// Инструментарий для работы с DOM в дочерних компонентах
+interface ISuccess {
+  total: number;
+}
 
-	// Переключить класс
-	toggleClass(element: HTMLElement, className: string, force?: boolean) {
-			element.classList.toggle(className, force);
-	}
+interface ISuccessActions {
+  onClick: () => void;
+}
 
-	// Установить текстовое содержимое
-	protected setText(element: HTMLElement, value: unknown) {
-			if (element) {
-					element.textContent = String(value);
-			}
-	}
+export class Success extends Component<ISuccess> {
+  protected _total: HTMLElement;
+  protected _close: HTMLElement;
 
-	// Сменить статус блокировки
-	setDisabled(element: HTMLElement, state: boolean) {
-			if (element) {
-					if (state) element.setAttribute('disabled', 'disabled');
-					else element.removeAttribute('disabled');
-			}
-	}
+  constructor(container: HTMLElement, actions: ISuccessActions) {
+      super(container);
 
-	// Скрыть
-	protected setHidden(element: HTMLElement) {
-			element.style.display = 'none';
-	}
+      this._close = ensureElement<HTMLElement>('.order-success__close', this.container);
+      this._total = ensureElement<HTMLElement>('.order-success__description', this.container)
 
-	// Показать
-	protected setVisible(element: HTMLElement) {
-			element.style.removeProperty('display');
-	}
+      if (actions?.onClick) {
+          this._close.addEventListener('click', actions.onClick);
+      }
+  }
 
-	// Установить изображение с алтернативным текстом
-	protected setImage(element: HTMLImageElement, src: string, alt?: string) {
-			if (element) {
-					element.src = src;
-					if (alt) {
-							element.alt = alt;
-					}
-			}
-	}
-
-	// Вернуть корневой DOM-элемент
-	render(data?: Partial<T>): HTMLElement {
-			Object.assign(this as object, data ?? {});
-			return this.container;
-	}
+  set total(value: string) {
+    this._total.textContent = `Потрачено ${value} синапсов`;
+  }
 }
