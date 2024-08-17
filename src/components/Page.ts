@@ -3,9 +3,9 @@ import {IEvents} from "./base/events";
 import {ensureElement} from "../utils/utils";
 
 interface IPage {
-    // counter: number;
+    counter: number;
     catalog: HTMLElement[];
-    // locked: boolean; 
+    locked: boolean; 
 }
 
 export class Page extends Component<IPage> {
@@ -19,19 +19,20 @@ export class Page extends Component<IPage> {
         super(container);
 
         this._counter = ensureElement<HTMLElement>('.header__basket-counter');
-        this._catalog = ensureElement<HTMLElement>('.catalog__items');
+        this._catalog = ensureElement<HTMLElement>('.gallery');
         this._wrapper = ensureElement<HTMLElement>('.page__wrapper');
         this._basket = ensureElement<HTMLElement>('.header__basket');
 
         this._basket.addEventListener('click', () => {
-            this.events.emit('bids:open');
+            this.events.emit('basket:open');
         });
     }
-
+// Сеттер для счётчика продуктов в корзине
     set counter(value: number) {
         this.setText(this._counter, String(value));
     }
 
+		  // Сеттер для карточек продуктов на странице
     set catalog(items: HTMLElement[]) {
         this._catalog.replaceChildren(...items);
     }

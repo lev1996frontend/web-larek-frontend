@@ -1,51 +1,54 @@
-import {Form} from "./common/Form";
-import {IOrderForms } from "../types";
-import { IEvents} from "./base/events";
-import {ensureElement} from "../utils/utils";
+import { IContacts } from './../types/index';
+import { Form } from './common/Form';
+import { IEvents } from './base/events';
 
-export class Order extends Form<IOrderForms> {
-	protected _buttons: HTMLButtonElement[];
-	constructor(container: HTMLFormElement, events: IEvents) {
+
+export interface IOrder {
+	 // Адрес заказа
+	 address: string;
+
+	 // Способ оплаты
+	 payment: string;
+}
+export class Order extends Form<IOrder> {
+	protected _card: HTMLButtonElement;
+	protected _cash: HTMLButtonElement;
+	constructor(
+		protected blockName: string,
+		container: HTMLFormElement,
+		protected events: IEvents
+	) {
 		super(container, events);
 
-		this._buttons = ensureElement<HTMLButtonElement>('.button_alt', container);
+		this._card = container.elements.namedItem('card') as HTMLButtonElement;
+		this._cash = container.elements.namedItem('cash') as HTMLButtonElement;
 
-		this._buttons.forEach(button => {
-				button.addEventListener('click', () => {
-					this.payment = button.name; 
-					events.emit('payment:change', button)
-				});
-		})
-		
-}
-set payment(value: string) {
-		this._buttons.forEach(button => {
-			if (button.name === value) {
-				button.classList.add('button_alt_active');
-			} else {
-				button.classList.remove('button_alt_active');
-			}
-		})
+		if (this._cash) {
+			this._cash.addEventListener('click', () => {
+				this._cash.classList.add('button_alt-active');
+				this._card.classList.remove('button_alt-active');
+				this.onInputChange('payment', 'cash');
+			});
+		}
+		if (this._card) {
+			this._card.addEventListener('click', () => {
+				this._card.classList.add('button_alt-active');
+				this._cash.classList.remove('button_alt-active');
+				this.onInputChange('payment', 'card');
+			});
+		}
 	}
-
-	set address(value: string) {
-		(this.container.elements.namedItem('address') as HTMLInputElement).value = value;
-
+	disablingButtonHighlighting() {
+		this._cash.classList.remove('button_alt-active');
+		this._card.classList.remove('button_alt-active');
 	}
 }
 
-export class Contacts extends Form<IOrderForms> {
-constructor(container: HTMLFormElement, events: IEvents) {
-	super(container, events);
+/*
+ * Класс, описывающий контакты
+ * */
+export class Contacts extends Form<IContacts> {
+	constructor(container: HTMLFormElement, events: IEvents) {
+		super(container, events);
+	}
 }
-
-	set phone(value: string) {
-		(this.container.elements.namedItem('phone') as HTMLInputElement).value = value;
-}
-
-set email(value: string) {
-		(this.container.elements.namedItem('email') as HTMLInputElement).value = value;
-}
-
-}
- 
