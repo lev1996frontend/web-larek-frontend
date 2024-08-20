@@ -2,13 +2,12 @@ import { IContacts } from './../types/index';
 import { Form } from './common/Form';
 import { IEvents } from './base/events';
 
-
 export interface IOrder {
-	 // Адрес заказа
-	 address: string;
+	// Адрес заказа
+	address: string;
 
-	 // Способ оплаты
-	 payment: string;
+	// Способ оплаты
+	payment: string;
 }
 export class Order extends Form<IOrder> {
 	protected _card: HTMLButtonElement;
@@ -38,7 +37,7 @@ export class Order extends Form<IOrder> {
 			});
 		}
 	}
-	disablingButtonHighlighting() {
+	disablingButton() {
 		this._cash.classList.remove('button_alt-active');
 		this._card.classList.remove('button_alt-active');
 	}

@@ -149,8 +149,8 @@ events.on('orderFormErrors:change', (errors: Partial<IOrderForms>) => {
 	const { payment, address } = errors;
 	order.valid = !payment && !address;
 	order.errors = Object.values({ payment, address })
-			.filter((i) => !!i)
-			.join('; ');
+		.filter((i) => !!i)
+		.join('; ');
 });
 
 // Изменилось состояние валидации формы контактов
@@ -189,7 +189,7 @@ events.on('contacts:submit', () => {
 			events.emit('order:success', res);
 			appData.clearBasket();
 			appData.updatePayment();
-			order.disablingButtonHighlighting();
+			order.disablingButton();
 			page.counter = 0;
 			appData.selectToOrder();
 		})

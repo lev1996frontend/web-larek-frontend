@@ -23,6 +23,7 @@ export class Card extends Component<ICard> {
 	protected _category: HTMLElement;
 	protected _price: HTMLElement;
 	protected _button: HTMLButtonElement;
+	private _selected = false;
 
 	constructor(
 		protected blockName: string,
@@ -77,17 +78,31 @@ export class Card extends Component<ICard> {
 
 	// Сеттер для определения выбранности продукта
 	set selected(value: boolean) {
-		if (!this._button.disabled) {
+		this._selected = value;
+		// Логика изменения текста кнопки в зависимости от состояния
+		if (this._button) {
 			this._button.disabled = value;
+			this._button.textContent = value ? 'В корзине' : 'Купить';
 		}
+	}
+	get selected(): boolean {
+		return this._selected;
 	}
 
 	// Сеттер для цены
 	set price(value: number | null) {
 		this._price.textContent =
-			value !== null ? totalPrice(value) + ' синапсов' : 'Бесценно'; // или 'Цена будет уточнена'
-		if (this._button && value === null) {
-			this._button.disabled = false; // или true, если нужно заблокировать кнопку для таких товаров
+			value !== null ? totalPrice(value) + ' синапсов' : 'Бесценно';
+		if (this._button) {
+			if (value === null) {
+				// Если цена товара "бесценно", блокируем кнопку
+				this._button.disabled = true;
+				this._button.textContent = 'Недоступен';
+			} else {
+				// Если цена есть, устанавливаем стандартное состояние кнопки
+				this._button.disabled = this._selected;
+				this._button.textContent = this._selected ? 'В корзине' : 'Купить';
+			}
 		}
 	}
 }

@@ -382,7 +382,7 @@ export interface IOrderForms {
 
 - `set payment` — устанавливает класс активности для кнопки.
 - `set address` — задает значение для поля адреса.
-- `disablingButtonHighlighting()`:
+- `disablingButton()`:
   Этот метод удаляет активное выделение с обеих кнопок, убирая CSS-класс `'button_alt-active'` с кнопок `_card` и `_cash`.
 
 #### Класс `Contacts`
