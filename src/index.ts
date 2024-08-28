@@ -42,7 +42,8 @@ const success = new Success('order-success', cloneTemplate(successTemplate), {
 		modal.close();
 	},
 });
-// получение продукты и данные с сервера
+
+// получение продуктов и данных с сервера
 api
 	.get('/product')
 	.then((res: ApiResponse) => {
@@ -87,6 +88,7 @@ events.on('card:select', (item: Product) => {
 	});
 });
 
+
 // Добавление товара в корзину
 events.on('cardToBasket:changed', (item: Product) => {
 	item.selected = true;
@@ -121,7 +123,6 @@ events.on('basket:open', () => {
 });
 
 // Удаление товара из корзины
-
 events.on('basket:delete', (item: Product) => {
 	appData.removeFromOrder(item.id);
 	item.selected = false;
@@ -133,20 +134,22 @@ events.on('basket:delete', (item: Product) => {
 	}
 });
 
-// оформить заказ
+// Оформить заказ
 events.on('basket:order', () => {
-	modal.render({
-		content: order.render({
-			address: '',
-			valid: false,
-			errors: [],
-		}),
-	});
+  modal.render({
+    content: order.render(
+      {
+        address: '',
+        valid: false,
+        errors: []
+      }
+    ),
+  });
 });
 
 // Изменение состояния валидации формы заказа
 events.on('orderFormErrors:change', (errors: Partial<IOrderForms>) => {
-	const { payment, address } = errors;
+  const { payment, address } = errors;
 	order.valid = !payment && !address;
 	order.errors = Object.values({ payment, address })
 		.filter((i) => !!i)
@@ -162,13 +165,13 @@ events.on('contactsFormErrors:change', (errors: Partial<IOrderForms>) => {
 		.join('; ');
 });
 
+
+
 // Изменение данных при введении
-events.on(
-	'orderInput:change',
-	(data: { field: keyof IOrderForms; value: string }) => {
-		appData.setOrderField(data.field, data.value);
-	}
-);
+events.on('orderInput:change', (data: { field: keyof IOrderForms, value: string }) => {
+  appData.setOrderField(data.field, data.value);
+});
+
 // Указание контактов(телефон и почта)
 events.on('order:submit', () => {
 	appData.order.total = appData.getBasketPrice();
@@ -207,8 +210,9 @@ events.on('order:success', (res: ApiListResponse<string>) => {
 	});
 });
 
-//Заакрытие модального окна и пересчёт товара
+// Закрытие модального окна и пересчет товара
 events.on('modal:close', () => {
 	page.locked = false;
-	appData.updatePayment();
+	appData.updatePayment();// Очищаем данные после успешного заказа
 });
+

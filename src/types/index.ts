@@ -1,4 +1,4 @@
-import { Product } from "../components/AppData";
+
 
 export interface IProductItem {
 	id: string;
@@ -11,8 +11,8 @@ export interface IProductItem {
 }
 
 export interface IAppState {
-	basket: Product[];
-	catalog: Product[];
+	basket: IProductItem[];
+	catalog: IProductItem[];
 	order: IOrder;
 	formErrors: FormErrors;
 	addItemToOrder(value: IProductItem): void;
@@ -26,7 +26,7 @@ export interface IAppState {
 	validateContacts(): boolean;
 	updatePayment(): boolean;
 	setBasketStore(items: IProductItem[]): void;
-	selectToOrder():void;
+	selectToOrder(): void;
 }
 
 export interface IContacts {
@@ -44,33 +44,34 @@ export interface IOrder {
 	address: string;
 	phone: string;
 	email: string;
-	total: number;
+	total: number | null; 
+	contacts?: string; // добавил поле contacts
 }
 
 export interface IOrderForms {
 	payment: string;
-  address: string;
-  email: string;
-  phone: string;
+	address: string;
+	email: string;
+	phone: string;
 }
 
 export type FormErrors = Partial<Record<keyof IOrder, string>>;
 
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
-export type CategorySchemeCard = 
-  | 'другое'
-  | 'софт-скил'
-  | 'дополнительное'
-  | 'кнопка'
-  | 'хард-скил';
+export type CategorySchemeType =
+	| 'другое'
+	| 'софт-скил'
+	| 'дополнительное'
+	| 'кнопка'
+	| 'хард-скил';
 
-	export interface ApiResponse {
-		items: IProductItem[];
-	}
-export type CategorySchemeList = {
-	[key in CategorySchemeCard]: string;
+export interface ApiResponse {
+	items: IProductItem[];
 }
+export type CategorySchemeList = {
+	[key in CategorySchemeType]: string;
+};
 export interface IOrderResult {
 	id: string;
 }

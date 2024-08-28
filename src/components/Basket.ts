@@ -50,12 +50,12 @@ export class Basket extends Component<IBasketView> {
 
 	// Метод для обновления индексов таблички при удалении товара из корзины
 	resetIndex() {
-		Array.from(this._list.children).forEach(
-			(item, index) =>
-				(item.querySelector(`.basket__item-index`)!.textContent = (
-					index + 1
-				).toString())
-		);
+		Array.from(this._list.children).forEach((item, index) => {
+			const indexElement = item.querySelector(`.basket__item-index`);
+			if (indexElement) {
+				indexElement.textContent = (index + 1).toString();
+			}
+		});
 	}
 }
 export interface IBasketAction {

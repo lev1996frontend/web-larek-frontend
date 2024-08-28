@@ -42,9 +42,12 @@
     "lint": "eslint --ext .js,.ts ./src",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier ./src --write",
-		"predeploy": "npm run build",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
   "keywords": [],
-  "author": ""
+  "author": "",
+  "dependencies": {
+    "validate.js": "^0.13.1"
+  }
 }
