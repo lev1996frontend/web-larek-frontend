@@ -54,4 +54,19 @@ export class Form<T> extends Component<IFormState> {
     Object.assign(this, inputs);
     return this.container;
   }
+	reset() {
+    // Очищаем все поля формы
+    const formElements = this.container.elements;
+    for (let i = 0; i < formElements.length; i++) {
+      const element = formElements[i] as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+      if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+        element.value = ''; // Очищаем значение
+      } else if (element.tagName === 'SELECT') {
+        (element as HTMLSelectElement).selectedIndex = 0; // Сбрасываем выбор к первому элементу
+      }
+    }
+    // Сбрасываем состояние валидации и ошибок
+    this.valid = false;
+    this.errors = '';
+  }
 }
