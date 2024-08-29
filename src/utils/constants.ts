@@ -16,20 +16,69 @@ export const categorySchemeList: CategorySchemeList = {
 	'хард-скил': 'card__category_hard',
 };
 
-export const constraints = {
-	address: {
-		presence: { allowEmpty: false, message: 'Необходимо указать адрес' },
-	},
-	email: {
-		email: { message: 'Необходимо указать корректный email' },
-	},
-	phone: {
-		format: {
-			pattern: /^\+?[1-9]\d{1,14}$/,
-			message: 'Необходимо указать корректный телефон',
-		},
-	},
-	payment: {
-		presence: { allowEmpty: false, message: 'Необходимо указать способ оплаты' },
-	}
+// Ограничения для полей заказа
+export const orderConstraints: TConstraints = {
+  address: {
+      presence: { message: 'Необходимо указать адрес', allowEmpty: false },
+      length: { minimum: 10, tooShort: 'Адрес слишком короткий' }
+  },
+  payment: {
+      presence: { message: 'Необходимо указать способ оплаты', allowEmpty: false }
+  }
 };
+
+
+// Ограничения для контактных данных
+export const contactsConstraints: TConstraints = {
+  email: {
+      presence: { message: 'Необходимо указать email', allowEmpty: false },
+      format: { 
+          pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 
+          message: 'Некорректный email' 
+      }
+  },
+  phone: {
+      presence: { message: 'Необходимо указать телефон', allowEmpty: false },
+      format: { 
+          pattern: /^\+?[1-9]\d{1,14}$/, 
+          message: 'Некорректный телефон. Укажите номер с кодом страны, максимум 15 цифр.' 
+      }
+  }
+};
+
+
+// Типы для ограничений
+type TConstraints = {
+  [key: string]: {
+      presence?: {
+          message: string;
+          allowEmpty?: boolean;
+      };
+      length?: {
+          minimum?: number;
+          tooShort?: string;
+      };
+      format?: {
+          pattern: RegExp;
+          message: string;
+      };
+  };
+};
+
+
+
+export function validateField(value: any, field: string, constraints: any): string | null {
+    const constraint = constraints[field];
+    if (constraint) {
+        if (constraint.presence && !value) {
+            return constraint.presence.message;
+        }
+        if (constraint.length && value.length < constraint.length.minimum) {
+            return constraint.length.tooShort;
+        }
+        if (constraint.format && !constraint.format.pattern.test(value)) {
+            return constraint.format.message;
+        }
+    }
+    return null;
+}

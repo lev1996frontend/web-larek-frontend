@@ -1,5 +1,7 @@
 import { Model } from './base/Model';
 import { FormErrors, IAppState, IOrder, IOrderForms, IProductItem } from '../types';
+import { contactsConstraints, orderConstraints, validateField } from '../utils/constants';
+
 
 export class Product extends Model<IProductItem> {
 	id: string;
@@ -71,33 +73,38 @@ export class AppData extends Model<IAppState> {
 		}
 	}
 
+
 	// Валидация заказа
 	validateOrder() {
-		const errors: typeof this.formErrors = {};
-		if (!this.order.address) {
-			errors.address = 'Необходимо указать адрес';
-		}
-		if (!this.order.payment) {
-			errors.payment = 'Необходимо указать способ оплаты';
-		}
-		this.formErrors = errors;
-		this.events.emit('orderFormErrors:change', this.formErrors);
-		return Object.keys(errors).length === 0;
-	}
+    const errors: typeof this.formErrors = {};
 
-	// Валидация контактных данных
-	validateContacts() {
-		const errors: typeof this.formErrors = {};
-		if (!this.order.email) {
-			errors.email = 'Необходимо указать email';
-		}
-		if (!this.order.phone) {
-			errors.phone = 'Необходимо указать телефон';
-		}
-		this.formErrors = errors;
-		this.events.emit('contactsFormErrors:change', this.formErrors);
-		return Object.keys(errors).length === 0;
-	}
+    for (const field in orderConstraints) {
+        const errorMessage = validateField(this.order[field as keyof IOrder], field, orderConstraints);
+        if (errorMessage) {
+            errors[field as keyof IOrder] = errorMessage;
+        }
+    }
+
+    this.formErrors = errors;
+    this.events.emit('orderFormErrors:change', this.formErrors);
+    return Object.keys(errors).length === 0;
+}
+
+// Валидация контактных данных
+validateContacts() {
+    const errors: typeof this.formErrors = {};
+
+    for (const field in contactsConstraints) {
+        const errorMessage = validateField(this.order[field as keyof IOrder], field, contactsConstraints);
+        if (errorMessage) {
+            errors[field as keyof IOrder] = errorMessage;
+        }
+    }
+
+    this.formErrors = errors;
+    this.events.emit('contactsFormErrors:change', this.formErrors);
+    return Object.keys(errors).length === 0;
+}
 
 	// Обновление состояния оплаты после успешного заказа
 	updatePayment() {
