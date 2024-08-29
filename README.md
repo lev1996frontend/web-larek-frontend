@@ -108,7 +108,7 @@ export interface IAppState {
 	catalog: Product[];
 	order: IOrder;
 	formErrors: FormErrors;
-	addItemToOrder(value: IProductItem): void;
+	addItemToBasket(value: IProductItem): void;
 	removeFromBasket(id: string): void;
 	clearBasket(): void;
 	getTotalBasket(): number;
@@ -126,16 +126,16 @@ export interface IAppState {
 **Поля**
 
 - `catalog` — Состояние каталога с продуктами (полагается, что IProductItem - интерфейс для отдельного продукта)
-- `preview` — Предпросмотр, который может быть строкой или null 
-- `basket` — Корзина, представляющая собой массив строк 
+- `preview` — Предпросмотр, который может быть строкой или null
+- `basket` — Корзина, представляющая собой массив строк
 - `order` — Заказ, который может быть объектом типа `IOrder` или null (если ещё нет активного заказа)
 - `loading` — Индикатор загрузки, логическое значение, показывающее, загружаются ли данные в данный момент
 - `formErrors` — ошибки, возникшие при валидации.
 
 **Методы**
 
-`addItemToOrder` — добавляет товар в заказ.
-`removeFromOrder` — удаляет товар из корзины по идентификатору.
+`addItemToBasket` — добавляет товар в заказ.
+`removeFromBasket` — удаляет товар из корзины по идентификатору.
 `clearBasket` — полностью очищает корзину.
 `setCatalog` — возвращает количество товаров в корзине.
 `getTotalBasket` — возвращает количество товаров в корзине.
@@ -158,10 +158,10 @@ export interface IAppState {
 export interface IProductItem {
 	id: string;
 	title: string;
-	price: number | null; 
+	price: number | null;
 	category: string;
 	description: string;
-	image: string; 
+	image: string;
 	selected: boolean;
 }
 ```
@@ -217,9 +217,10 @@ interface ICard {
 - `get selected(): boolean` — возвращает текущее состояние выбора товара.
 - `set price(value: number | null)` — устанавливает цену товара. Если цена отсутствует (null), отображается "Бесценно", и кнопка взаимодействия блокируется.
 
-*Товар с бесценной стоимостью блокирует возможность взаимодействия через кнопку (disabled) и отображает текст "Недоступен".*
+_Товар с бесценной стоимостью блокирует возможность взаимодействия через кнопку (disabled) и отображает текст "Недоступен"._
 
 #### CardListStore
+
 Класс расширяет функционал `Card` и предназначен для работы с карточками в списке товаров.
 
 Конструктор:
@@ -243,7 +244,7 @@ interface ICardPreview {
 **Конструктор**
 
 - `constructor(container: HTMLElement, actions?: ICardActions)` — создает экземпляр карточки с возможностью предпросмотра товара.
-  
+
 **Методы**
 
 - `set description(value: string)` — устанавливает текстовое описание товара.
@@ -383,6 +384,7 @@ export interface IOrderForms {
 - `set address` — задает значение для поля адреса.
 - `disablingButton()`:
   Этот метод удаляет активное выделение с обеих кнопок, убирая CSS-класс `'button_alt-active'` с кнопок `_card` и `_cash`.
+- `reset` - Очищаем поля формы, чтобы сбросить введенные данные.
 
 #### Класс `Contacts`
 

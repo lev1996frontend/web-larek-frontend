@@ -88,11 +88,10 @@ events.on('card:select', (item: Product) => {
 	});
 });
 
-
 // Добавление товара в корзину
 events.on('cardToBasket:changed', (item: Product) => {
 	item.selected = true;
-	appData.addItemToOrder(item);
+	appData.addItemToBasket(item); // Удаление из корзины
 	page.counter = appData.getTotalBasket();
 	modal.close();
 });
@@ -124,7 +123,7 @@ events.on('basket:open', () => {
 
 // Удаление товара из корзины
 events.on('basket:delete', (item: Product) => {
-	appData.removeFromOrder(item.id);
+	appData.removeFromBasket(item.id);
 	item.selected = false;
 	basket.price = appData.getBasketPrice();
 	page.counter = appData.getTotalBasket();
@@ -136,20 +135,18 @@ events.on('basket:delete', (item: Product) => {
 
 // Оформить заказ
 events.on('basket:order', () => {
-  modal.render({
-    content: order.render(
-      {
-        address: '',
-        valid: false,
-        errors: []
-      }
-    ),
-  });
+	modal.render({
+		content: order.render({
+			address: '',
+			valid: false,
+			errors: [],
+		}),
+	});
 });
 
 // Изменение состояния валидации формы заказа
 events.on('orderFormErrors:change', (errors: Partial<IOrderForms>) => {
-  const { payment, address } = errors;
+	const { payment, address } = errors;
 	order.valid = !payment && !address;
 	order.errors = Object.values({ payment, address })
 		.filter((i) => !!i)
@@ -165,12 +162,13 @@ events.on('contactsFormErrors:change', (errors: Partial<IOrderForms>) => {
 		.join('; ');
 });
 
-
-
 // Изменение данных при введении
-events.on('orderInput:change', (data: { field: keyof IOrderForms, value: string }) => {
-  appData.setOrderField(data.field, data.value);
-});
+events.on(
+	'orderInput:change',
+	(data: { field: keyof IOrderForms; value: string }) => {
+		appData.setOrderField(data.field, data.value);
+	}
+);
 
 // Указание контактов(телефон и почта)
 events.on('order:submit', () => {
@@ -190,11 +188,6 @@ events.on('contacts:submit', () => {
 		.post('/order', appData.order)
 		.then((res) => {
 			events.emit('order:success', res);
-			appData.clearBasket();
-			appData.updatePayment();
-			order.disablingButton();
-			page.counter = 0;
-			appData.selectToOrder();
 		})
 		.catch((err) => {
 			console.error(err);
@@ -203,6 +196,22 @@ events.on('contacts:submit', () => {
 
 // Успешный заказ
 events.on('order:success', (res: ApiListResponse<string>) => {
+	// Очищаем корзину
+	appData.clearBasket(); // Обновление состояния корзины
+
+	// Сбрасываем форму заказа
+	order.reset();
+
+	// Сбрасываем контактные данные
+	contacts.reset();
+
+	// Обновляем счетчик товаров на странице
+	page.counter = 0;
+
+	// Перезагружаем состояние заказа
+	appData.selectToOrder(); // Обновление состояния заказа
+
+	// Отображаем сообщение об успешном заказе
 	modal.render({
 		content: success.render({
 			description: res.total,
@@ -213,6 +222,5 @@ events.on('order:success', (res: ApiListResponse<string>) => {
 // Закрытие модального окна и пересчет товара
 events.on('modal:close', () => {
 	page.locked = false;
-	appData.updatePayment();// Очищаем данные после успешного заказа
+	appData.updatePayment(); // Очищаем данные после успешного заказа
 });
-

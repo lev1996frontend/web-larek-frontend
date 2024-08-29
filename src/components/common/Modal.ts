@@ -52,7 +52,7 @@ export class Modal extends Component<IModalData> {
 
   handleEscUp(event: KeyboardEvent) {
     if (event.key === 'Escape') {
-      event.preventDefault(); // предотвращаем действия по умолчанию
+      event.preventDefault(); 
       this.close();
     }
   }

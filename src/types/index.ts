@@ -1,5 +1,3 @@
-
-
 export interface IProductItem {
 	id: string;
 	description: string;
@@ -15,7 +13,7 @@ export interface IAppState {
 	catalog: IProductItem[];
 	order: IOrder;
 	formErrors: FormErrors;
-	addItemToOrder(value: IProductItem): void;
+	addItemToBasket(value: IProductItem): void;
 	removeFromBasket(id: string): void;
 	clearBasket(): void;
 	getTotalBasket(): number;
@@ -44,7 +42,7 @@ export interface IOrder {
 	address: string;
 	phone: string;
 	email: string;
-	total: number | null; 
+	total: number | null;
 	contacts?: string; // добавил поле contacts
 }
 
